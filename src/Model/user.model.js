@@ -68,12 +68,35 @@ const userSchema = new Schema(
 
 //hash password only when it's new or changes - prevents re-hashing
 //an already hashed password on unrelated document saves.
+//learn the concept why next is inside
 userSchema.pre("save",async function(next){
-  if(!this.isModified) return next();
-  this.password = await bcrypt.hash(this.password,10);
-  next();
+   if(!this.isModified) return next();
+   this.password = await bcrypt.hash(this.password,10);
 })
 //comparing the stored password with enterend password for login
-userSchema.methods.isPasswordCorrect = async function(password){
-  return bcrypt.compare(password,this.password);
+userSchema.methods.isPasswordCorrect = async function(password) {
+    return await bcrypt.compare(password, this.password);
+};
+userSchema.methods.generateAccessToken = async function(){
+  return jwt.sign(
+    {_id:this._id,
+      email:this.email
+    },
+    process.env.accessToken,
+    {
+      expiresIn:process.env.accessTokenExpiry || "15m"
+    }
+  )
+};
+
+userSchema.methods.generateAccessToken = function(){
+  return jwt.sign({_id:this._id},
+    process.env.refreshToken,
+    {
+      expiresIn:process.env.refreshTokenExpire || "10d"
+    }
+  )
 }
+
+export const User = mongoose.model("User",userSchema)
+
