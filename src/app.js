@@ -1,10 +1,10 @@
 import express from "express";
-import connectDB from "./config/db.js";
+// import connectDB from "./config/db.js";
 
 
 let app = express();
 
-connectDB();
+// connectDB();
 
 app.use(express.json());
 

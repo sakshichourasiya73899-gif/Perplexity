@@ -6,7 +6,11 @@ dns.setDefaultResultOrder("ipv4first");
 import "dotenv/config";
 import app from "./src/app.js"
 
-
+app.get("/get",(req,res)=>{
+    res.status(200).json({
+        message:"User Found....!!"
+    })
+})
 app.listen(process.env.PORT, () => {
     
     console.log(process.env.PORT)
