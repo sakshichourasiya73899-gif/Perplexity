@@ -4,17 +4,24 @@ import express from "express";
 
 
 let app = express();
-
+class ErrorHandler extends Error{
+    constructor(message,statuscode){
+    super(message);
+    this.statuscode = statuscode;
+    }
+}
 // connectDB();
 
 app.use(express.json());
 app.get("/get",(req,res,next)=>{
-    next(new error("user not found....!"));
+    return next(new ErrorHandler("unauthorized",401));
 })
 
 
 app.use((err,req,res,next)=>{
-    res.status(404).json({
+    err.statuscode = err.statuscode||500,
+    err.message = err.message||"Internal Server Error...!",
+    res.status(err.statuscode).json({
         message:err.message
     })
 })
